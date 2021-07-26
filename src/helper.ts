@@ -12,8 +12,8 @@ export interface VerifyJWTResponse {
 }
 
 interface VerifyCaptchaRequest {
-  token: string,
   nonce: string,
+  token: string,
 }
 
 export interface VerifyCaptchaValidResponse {
@@ -70,9 +70,28 @@ var verifyCaptcha = async function (payload: VerifyCaptchaRequest): Promise<Veri
   )
     .then((res:any) => {
       let data = res.data;
-      console.log("Google Response:", data);
+      if ( data.success ) {
+        var token = jwt.sign(
+          { data: { nonce: nonce } },
+          SECRET,
+          { expiresIn: JWT_SIGN_EXPIRY + 'm' });
+    
+        return {
+          valid: true,
+          jwt: token
+        }
+      } else {
+        return {
+          valid: false
+        }
+      }
     })
-
+    .catch((e: Error) => {
+      winston.error( "Error connecting to google recaptcha verifiecation", e );
+      return {
+        valid: false
+      }
+    })
   return {
     valid: false
   }

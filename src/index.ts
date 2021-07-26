@@ -4,7 +4,9 @@ import { Request, Response } from "express"
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const { NODE_ENV, SECRET, CORS_ALLOW_ALL, SERVICE_PORT, LISTEN_IP } = require('./envConfig');
+const { NODE_ENV, SECRET, CORS_ALLOW_ALL, SERVICE_PORT, LISTEN_IP, LOG_LEVEL } = require('./envConfig');
+const winston = require('./loggerSetup')();
+
 
 // Prevent default keys going into production
 if (NODE_ENV == 'production') {
